@@ -1,12 +1,12 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define([ 'demock' ], factory);
+        define([ 'angular', 'demock' ], factory);
     } else if (typeof exports === 'object') {
-        factory(require('demock'));
+        factory(require('angular'), require('demock'));
     } else {
-        factory(root.demock);
+        factory(root.angular, root.demock);
     }
-}(this, function (demock) {
+}(this, function (angular, demock) {
     demock.init = function () {
         return [ '$httpProvider', function ($httpProvider) {
             $httpProvider.interceptors.push([ '$q', '$window', function ($q, $window) {
@@ -15,7 +15,7 @@
                         var request = {
                             method: config.method,
                             url: config.url,
-                            params: config.data
+                            params: angular.extend({}, config.data, config.params)
                         };
 
                         demock.filterRequest(request);
