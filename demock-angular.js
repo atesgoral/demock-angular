@@ -7,6 +7,20 @@
         factory(root.angular, root.demock);
     }
 }(this, function (angular, demock) {
+    function normalizeParams(config) {
+        if (config.params) {
+            return config.params;
+        } else if (config.data) {
+            if (typeof config.data === 'object') {
+                return config.data;
+            } else if (typeof config.data === 'string') {
+                try {
+                    return JSON.parse(config.data);
+                } catch (e) {}
+            }
+        }
+    }
+
     demock.init = function () {
         return [ '$httpProvider', function ($httpProvider) {
             $httpProvider.interceptors.push([ '$q', '$window', function ($q, $window) {
@@ -15,20 +29,19 @@
                         var request = {
                             method: config.method,
                             url: config.url,
-                            params: angular.extend({}, config.data, config.params)
+                            params: normalizeParams(config)
                         };
 
                         demock.filterRequest(request);
 
                         config.method = request.method;
                         config.url = request.url;
-                        config.data = request.params;
 
                         return config;
                     },
                     response: function (_response) {
                         var request = {
-                                params: _response.config.data
+                                params: normalizeParams(_response.config)
                             },
                             response = {
                                 statusCode: _response.status,
