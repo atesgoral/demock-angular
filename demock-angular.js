@@ -29,13 +29,15 @@
                         var request = {
                             method: config.method,
                             url: config.url,
-                            params: normalizeParams(config)
+                            params: normalizeParams(config),
+                            headers: {}
                         };
 
                         demock.filterRequest(request);
 
                         config.method = request.method;
                         config.url = request.url;
+                        config.headers = request.headers;
 
                         return config;
                     },
