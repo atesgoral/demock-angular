@@ -56,7 +56,7 @@
                             _response.data = response.data;
 
                             if (response.timeout) {
-                                _response.statusCode = 404; // @todo Current Angular behaviour is 404. Might change to 0 in the future.
+                                _response.status = 0;
                                 dfd.reject(_response);
                             } else if (response.statusCode >= 400 && response.statusCode < 600) {
                                 dfd.reject(_response);
