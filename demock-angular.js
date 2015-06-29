@@ -6,7 +6,7 @@
     } else {
         factory(root.angular, root.demock);
     }
-}(this, function (angular, demock) {
+}(this, function (angular, Demock) {
     function normalizeParams(config) {
         if (config.params) {
             return config.params;
@@ -21,9 +21,28 @@
         }
     }
 
-    demock.init = function () {
-        return [ '$httpProvider', function ($httpProvider) {
-            $httpProvider.interceptors.push([ '$q', '$window', function ($q, $window) {
+    angular.module('demock', [])
+        .provider('$demock', function () {
+            var demock = new Demock(),
+                middlewareFactories = [];
+
+            this.demock = demock;
+
+            this.use = function (middlewareFactory) {
+                middlewareFactories.push(middlewareFactory);
+                return this;
+            };
+
+            this.$get = [ '$injector', function ($injector) {
+                middlewareFactories.forEach(function (middlewareFactory) {
+                    demock.use($injector.invoke(middlewareFactory));
+                });
+
+                return demock;
+            }];
+        })
+        .config([ '$httpProvider', function ($httpProvider) {
+            $httpProvider.interceptors.push([ '$q', '$window', '$demock', function ($q, $window, $demock) {
                 return {
                     request: function (config) {
                         var request = {
@@ -33,7 +52,7 @@
                             headers: {}
                         };
 
-                        demock.filterRequest(request);
+                        $demock.filterRequest(request);
 
                         config.method = request.method;
                         config.url = request.url;
@@ -51,7 +70,7 @@
                             },
                             dfd = $q.defer();
 
-                        while (demock.filterResponse(request, response)) {}
+                        $demock.filterResponse(request, response);
 
                         function resolve() {
                             _response.status = response.statusCode;
@@ -85,6 +104,5 @@
                     }
                 };
             }]);
-        }];
-    };
+        }]);
 }));
