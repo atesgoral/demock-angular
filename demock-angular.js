@@ -24,18 +24,18 @@
     angular.module('demock', [])
         .provider('$demock', function () {
             var demock = new Demock(),
-                middlewareFactories = [];
+                filterFactories = [];
 
-            this.demock = demock;
+            this.filters = Demock.filters;
 
-            this.use = function (middlewareFactory) {
-                middlewareFactories.push(middlewareFactory);
+            this.use = function (filterFactory) {
+                filterFactories.push(filterFactory);
                 return this;
             };
 
             this.$get = [ '$injector', function ($injector) {
-                middlewareFactories.forEach(function (middlewareFactory) {
-                    demock.use($injector.invoke(middlewareFactory));
+                filterFactories.forEach(function (filterFactory) {
+                    demock.use($injector.invoke(filterFactory));
                 });
 
                 return demock;
