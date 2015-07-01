@@ -24,18 +24,29 @@
     angular.module('demock', [])
         .provider('$demock', function () {
             var demock = new Demock(),
-                filterFactories = [];
+                requestFilterFactories = [],
+                responseFilterFactories = [];
 
-            this.filters = Demock.filters;
+            this.requestFilters = Demock.requestFilters;
+            this.responseFilters = Demock.responseFilters;
 
-            this.use = function (filterFactory) {
-                filterFactories.push(filterFactory);
+            this.appendRequestFilter = function (filterFactory) {
+                requestFilterFactories.push(filterFactory);
+                return this;
+            };
+
+            this.appendResponseFilter = function (filterFactory) {
+                responseFilterFactories.push(filterFactory);
                 return this;
             };
 
             this.$get = [ '$injector', function ($injector) {
-                filterFactories.forEach(function (filterFactory) {
-                    demock.use($injector.invoke(filterFactory));
+                requestFilterFactories.forEach(function (filterFactory) {
+                    demock.appendRequestFilter($injector.invoke(filterFactory));
+                });
+
+                responseFilterFactories.forEach(function (filterFactory) {
+                    demock.appendResponseFilter($injector.invoke(filterFactory));
                 });
 
                 return demock;
