@@ -68,13 +68,12 @@
                         config.method = request.method;
                         config.url = request.url;
                         config.headers = request.headers;
+                        config.__demockRequest = request;
 
                         return config;
                     },
                     response: function (_response) {
-                        var request = {
-                                params: normalizeParams(_response.config)
-                            },
+                        var request = _response.config.__demockRequest,
                             response = {
                                 statusCode: _response.status,
                                 data: _response.data
