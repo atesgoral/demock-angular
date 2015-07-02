@@ -1,0 +1,22 @@
+{
+  "name": "angular-demock",
+  "version": "0.3.1",
+  "description": "Angular adaptor for Demock",
+  "main": "angular-demock.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/demockjs/angular-demock.git"
+  },
+  "keywords": [
+    "api",
+    "test",
+    "mock",
+    "json",
+    "simulate",
+    "offline",
+    "angular"
+  ],
+  "author": "Ates Goral <ates@magnetiq.com> (http://magnetiq.com/)",
+  "license": "MIT",
+  "homepage": "https://github.com/demockjs/angular-demock"
+}
