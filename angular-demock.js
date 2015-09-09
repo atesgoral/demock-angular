@@ -25,7 +25,8 @@
         .provider('$demock', function () {
             var demock = new Demock(),
                 requestFilters = [],
-                responseFilters = [];
+                responseFilters = [],
+                loggerFactory;
 
             this.requestFilters = Demock.requestFilters;
             this.responseFilters = Demock.responseFilters;
@@ -46,6 +47,10 @@
                 return this;
             };
 
+            this.setLogger = function (factory) {
+                loggerFactory = factory;
+            };
+
             this.$get = [ '$injector', function ($injector) {
                 requestFilters.forEach(function (filter) {
                     demock.appendRequestFilter($injector.invoke(filter.factory, null, { config: filter.config }));
@@ -54,6 +59,10 @@
                 responseFilters.forEach(function (filter) {
                     demock.appendResponseFilter($injector.invoke(filter.factory, null, { config: filter.config }));
                 });
+
+                if (loggerFactory) {
+                    demock.setLogger($injector.invoke(loggerFactory));
+                }
 
                 return demock;
             }];
