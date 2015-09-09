@@ -49,6 +49,7 @@
 
             this.setLogger = function (factory) {
                 loggerFactory = factory;
+                return this;
             };
 
             this.$get = [ '$injector', function ($injector) {
